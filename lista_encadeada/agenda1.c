@@ -11,12 +11,129 @@ struct registro{
 };
 typedef struct registro Agenda;
 
-/*Agenda *inicializa(void);
-Agenda *insere(Agenda *l, char *nome, char *telefone, unsigned int cep, char *data);
+Agenda *inicializa(void);
+Agenda *insere(Agenda *l);//, char *nome, char *telefone, unsigned int cep, char *data);
 void imprime(Agenda *l);
 Agenda *apaga_contato(Agenda *l, char *nome);
 void libera(Agenda *l);
+int tamanho(Agenda *l);
+//Agenda *novo_registro(Agenda *l);
+int menu();
+void opcao(Agenda *l, int op);
+
+int vazia(Agenda *l){
+  if(l->prox==NULL)
+    return 1;
+  else
+    return 0;
+}
+
+
+int main(){
+
+  char *nome = (char *)malloc(100*sizeof(char));
+  char *telefone = (char *)malloc(10*sizeof(char));
+  unsigned int cep;
+  char *data = (char *)malloc(10*sizeof(char));
+
+  Agenda *l = (Agenda *)malloc(sizeof(Agenda));
+  if(!l){ // verifica se tem memória
+    printf("Sem memória disponível!\n");
+    exit(1);
+  } else {
+    l=inicializa();
+    int opt;
+
+    do{
+      opt=menu();
+
+      switch (opt) {
+        case 0:
+          libera(l);
+          break;
+        case 1:
+          l=insere(l);
+          break;
+        case 2:
+          printf("opcao 2\n");
+          break;
+        case 3:
+          printf("opcao 3\n");
+          break;
+        case 4:
+          imprime(l);
+          break;
+        default:
+          printf("Digite uma opcao valida (:\n\n");
+      }
+
+    } while(opt);
+    free(l);
+    return 0;
+  }
+
+/*
+  l = insere(l,"pedro","1234",123,"hoje");
+  l = insere(l,"marina","999888",1278231,"25maio");
+
+  printf("\n__________________\n    IMPRIME   \n\n");
+  imprime(l);
+
+  int x = tamanho(l);
+  printf("TAMANHO %d\n\n",x);
+  l=apaga_contato(l,"pedro");
+  printf("DEPOIS DE REMOVER\n  ----------------------- \n");
+  imprime(l);
+
+
+  libera(l);
 */
+//  return 0;
+}
+
+int menu(){
+  int opt;
+  //system("clear");
+//  printf("'-----------------------------'\n");
+//  printf("'        bem vindo            '\n");
+//  printf("'-----------------------------'\n");
+  printf("Escolha alguma das opcoes:\n");
+  printf("1. Adicionar um registro\n");
+  printf("2. Remover um registro\n");
+  printf("3. Buscar registro\n");
+  printf("4. Visualizar todos os registros\n");
+  printf("0. Sair\n");
+  printf("\n\nOpção: ");
+  scanf("%d", &opt);
+
+  return opt;
+
+}
+/*
+void opcao(Agenda *l, int op){
+
+  Agenda *tmp;
+  switch (op) {
+    case 0:
+      libera(l);
+      break;
+    case 1:
+      insere(l);
+      break;
+    case 2:
+      printf("opcao 2\n");
+      break;
+    case 3:
+      printf("opcao 3\n");
+      break;
+    case 4:
+      imprime(l);
+      break;
+    default:
+      printf("Digite uma opcao valida (:\n\n");
+  }
+}*/
+
 
 //inicializa
 Agenda *inicializa(void){
@@ -24,8 +141,28 @@ Agenda *inicializa(void){
 }
 
 //insere
-Agenda *insere(Agenda *l, char *nome, char *telefone, unsigned int cep, char *data){
+Agenda *insere(Agenda *l){//, char *nome, char *telefone, unsigned int cep, char *data){
   Agenda *novo = (Agenda*)malloc(sizeof(Agenda));
+
+  char *nome = (char *)malloc(100*sizeof(char));
+  char *telefone = (char *)malloc(10*sizeof(char));
+  unsigned int cep;
+  char *data = (char *)malloc(10*sizeof(char));
+
+  printf(" -----------------------------\n");
+  printf("|        novo registro       |\n");
+  printf(" -----------------------------\n");
+  printf("1 - Inserir contato\n\n");
+  printf("Digite o nome:  ");
+  scanf("%s", nome);
+  printf("Numero de telefone:  ");
+  scanf("%s", telefone);
+  printf("CEP:  ");
+  scanf("%d", &cep);
+  printf("Data de aniversario:  ");
+  scanf("%s", data);
+
+
   novo->nome=nome;
   novo->telefone=telefone;
   novo->cep=cep;
@@ -37,10 +174,22 @@ Agenda *insere(Agenda *l, char *nome, char *telefone, unsigned int cep, char *da
 
 void imprime(Agenda *l){
   Agenda *ag;
-  for(ag=l; ag!=NULL; ag=ag->prox){
-    printf("Nome: %s\n", ag->nome);
-  //  printf("Telefone: %s\n", ag->telefone);
+/*  if(vazia(l)){
+    printf("Lista vazia\n");
+    return ;
   }
+*/
+  //if(l->prox==NULL){
+  //  printf("Lista vazia\n");
+  //} else {
+  printf("TESTE\n");
+  if(l==NULL)
+    printf("VAZIA\n");
+    for(ag=l; ag!=NULL; ag=ag->prox){
+      printf("Nome: %s\n", ag->nome);
+    //  printf("Telefone: %s\n", ag->telefone);
+    }
+  //}
 }
 
 Agenda *apaga_contato(Agenda *l, char *nome){
@@ -90,21 +239,21 @@ int tamanho(Agenda *l){
   return cont;
 }
 
-int main(){
 
+//Agenda *novo_registro(Agenda *l){
+//  system("clear");
+
+  //Agenda *l = (Agenda *)malloc(sizeof(Agenda));
+
+/*
   char *nome = (char *)malloc(100*sizeof(char));
   char *telefone = (char *)malloc(10*sizeof(char));
   unsigned int cep;
   char *data = (char *)malloc(10*sizeof(char));
 
-  Agenda *l;
-
-  l=inicializa();
-
-
-  printf("-----------------------------\n");
-  printf("|         Agenda             |\n");
-  printf("-----------------------------\n");
+  printf(" -----------------------------\n");
+  printf("|        novo registro       |\n");
+  printf(" -----------------------------\n");
   printf("1 - Inserir contato\n\n");
   printf("Digite o nome:  ");
   scanf("%s", nome);
@@ -115,22 +264,8 @@ int main(){
   printf("Data de aniversario:  ");
   scanf("%s", data);
 
-  l=insere(l,nome,telefone,cep,data);
-
-  l = insere(l,"pedro","1234",123,"hoje");
-  l = insere(l,"marina","999888",1278231,"25maio");
-
-  printf("\n__________________\n    IMPRIME   \n\n");
+//  l=insere(l,nome,telefone,cep,data);
   imprime(l);
-
-  int x = tamanho(l);
-  printf("TAMANHO %d\n\n",x);
-  l=apaga_contato(l,"pedro");
-  printf("DEPOIS DE REMOVER\n  ----------------------- \n");
-  imprime(l);
-
-
-  libera(l);
-
-  return 0;
-}
+  return l;
+*/
+//}
