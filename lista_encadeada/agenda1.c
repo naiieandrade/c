@@ -7,11 +7,12 @@
 
 struct registro{
   char nome[101];
-  char telefone[11];
+  char telefone[10];
   char endereco[101];
   unsigned int cep;
-  char data[11];
+  char data[9];
   struct registro *prox;
+  struct registro *ant;
 };
 typedef struct registro Agenda;
 
@@ -23,9 +24,9 @@ void libera(Agenda *l);
 int tamanho(Agenda *l);
 int menu();
 void opcao(Agenda *l, int op);
-char *registro_apagar();
 void *busca(Agenda *l);
 char *mascaraTelefone(char telefone[], char formato[]);
+Agenda *buscaRegistro(Agenda *l, char nome[]);
 
 int vazia(Agenda *l){
   if(l->prox==NULL)
@@ -38,6 +39,9 @@ char *mascaraData(char dataKa[]){
   char aux[11];
   int i=0;
  char formato[] = MDATA;
+ printf("TESTE DATA 1\n");
+ printf("AUX INICIAL %s\n",aux);
+ printf("DATAKA PARAMETRO %s\n",dataKa);
 
   while(*dataKa){
     if(formato[i] != '#'){
@@ -50,7 +54,12 @@ char *mascaraData(char dataKa[]){
     }
   }
   aux[i]=0;
+  printf("AUX i %d = %c\n",i,aux[i]);
+  printf("TESTE DATA 2\n");
+  printf("AUX %s\n",aux);
   strcpy(dataKa, aux);
+  //aux="";
+  printf("dataKa %s\n",dataKa);
   return dataKa;
 }
 
@@ -122,10 +131,10 @@ Agenda *insere(Agenda *l){
   Agenda *novo = (Agenda*)malloc(sizeof(Agenda));
 
   char nome[101];
-  char telefone[11];
+  char telefone[10];
   char endereco[101];
   unsigned int cep;
-  char dataNascimento[11];
+  char dataNascimento[10];
 
   printf(" -----------------------------\n");
   printf("|        novo registro       |\n");
@@ -136,7 +145,7 @@ Agenda *insere(Agenda *l){
   scanf("%[^\n]", nome);
   printf("Numero de telefone:  ");
   scanf("%s", telefone);
-  printf("TELEFONE %s",telefone);
+  //printf("TELEFONE %s",telefone);
   fflush ( stdin );
   printf("Endereco:  ");
   getchar();
@@ -145,16 +154,22 @@ Agenda *insere(Agenda *l){
   scanf("%d", &cep);
   printf("Data de nascimento:  ");
   scanf("%s", dataNascimento);
-  printf("DATA %s",dataNascimento);
-  printf("das/dsa/dsad\n");
+  //printf("DATA %s",dataNascimento);
+  //printf("das/dsa/dsad\n");
 
   strcpy(novo->nome,nome);
   strcpy(novo->telefone,mascaraTelefone(telefone,MTELEFONE));
   strcpy(novo->endereco,endereco);
   novo->cep=cep;
-  strcpy(novo->data,mascaraData(dataNascimento));
-  printf("novo data %s\n",novo->data );
+  //printf("DATA %s",dataNascimento);
+  strcpy(novo->data,dataNascimento); //mascaraData(dataNascimento)
+  //printf("novo data %s\n",novo->data );
   novo->prox = l;
+  novo->ant = NULL;
+
+  if(l!=NULL){
+    l->ant=novo;
+  }
 
   printf("\n_____Contato adicionado_____\n\n\n");
 
@@ -169,7 +184,7 @@ void imprime(Agenda *l){
   }
 */
   if(l==NULL)
-    printf("VAZIA\n");
+    printf("\n\nNão possui nenhum registro :(\n");
   else
     printf("\n\nVisualizar registros:\n");
   for(ag=l; ag!=NULL; ag=ag->prox){
@@ -181,8 +196,9 @@ void imprime(Agenda *l){
 }
 
 Agenda *apaga_contato(Agenda *l){//, char *nome_remover){
-  Agenda *ant = NULL;
-  Agenda *aux = l;
+  //Agenda *ant = NULL;
+  //Agenda *aux = l;
+
 
   char nome[101];
 
@@ -193,27 +209,26 @@ Agenda *apaga_contato(Agenda *l){//, char *nome_remover){
   getchar();
   scanf("%[^\n]", nome);
 
+  Agenda *aux = buscaRegistro(l, nome);
 
-  /* Verifica se achou o elemento */
-  while(aux!=NULL && strcmp(aux->nome,nome)!=0){
-    ant = aux;
-    aux = aux->prox;
-  }
   /* Verifica se achou o elemento */
   if(aux==NULL){
     printf("\n\n!!! Não achou o registro solicitado.\n\n");
     return l;
   }
   /* Retira elemento */
-  if(ant==NULL){
+  if(l==aux){
     /* retira do início */
     l = aux->prox;
   } else {
     /* retira do meio */
-    ant->prox = aux->prox;
+    aux->ant->prox = aux->prox;
   }
 
-  printf("Registro removido!");
+  if(aux->prox != NULL)
+    aux->prox->ant=aux->ant;
+
+  printf("\nRegistro removido!\n\n");
 
   free(aux);
   return l;
@@ -249,6 +264,16 @@ void *busca(Agenda *l){
 
 }
 
+/* função de busca: busca um elemento na lista */
+Agenda *buscaRegistro(Agenda *l, char nome[]){
+  Agenda *aux;
+  for(aux=l; aux!=NULL; aux=aux->prox){
+    if(strcmp(aux->nome, nome)==0)
+      return aux;
+  }
+  return NULL;
+}
+
 
 void libera(Agenda *l){
   Agenda *p=l; //aux, agenda
@@ -274,7 +299,7 @@ int tamanho(Agenda *l){
 char *mascaraTelefone(char telefone[], char formato[]){
   char aux[11];
   int i=0;
-
+  //printf("TESTE TELEFONE 1\n");
   while(*telefone){
     if(formato[i] != '#'){
       aux[i]=formato[i];
@@ -286,6 +311,7 @@ char *mascaraTelefone(char telefone[], char formato[]){
     }
   }
   aux[i]=0;
+  //printf("TESTE TELEFONE 2\n");
   strcpy(telefone, aux);
   return telefone;
 }
