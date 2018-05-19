@@ -156,7 +156,12 @@ Agenda *insere(Agenda *l){
             novo->prox=atual->prox;
             novo->ant=atual;
             atual->prox=novo;
+          //  novo->ant=atual;
+          //  novo->prox=NULL;
+            printf("%s",novo->ant->ant->nome);
             printf("%s",novo->ant->nome);
+            printf("%s",novo->nome);
+            printf("%s",novo->prox->nome);
             //novo->ant=atual;
             //atual=atual->prox;
           }
@@ -190,6 +195,8 @@ void imprime(Agenda *l){
   for(ag=l; ag!=NULL; ag=ag->prox){
     printf("Nome: %s\n", ag->nome);
   }
+  int size= tamanho(l);
+  printf("TAMANHO: %d\n",size );
   printf("\n\n\n");
 }
 
