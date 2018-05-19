@@ -2,9 +2,6 @@
 #include<stdlib.h>
 #include<string.h>
 
-#define MTELEFONE "#####-####"
-#define MDATA "##/##/####"
-
 struct registro{
   char nome[101];
   char telefone[11];
@@ -17,7 +14,7 @@ struct registro{
 typedef struct registro Agenda;
 
 Agenda *inicializa(void);
-Agenda *insere(Agenda *l);
+Agenda *insere(Agenda *l, Agenda **head);
 void imprime(Agenda *l);
 Agenda *apaga_contato(Agenda *l);
 void libera(Agenda *l);
@@ -38,6 +35,7 @@ int vazia(Agenda *l){
 int main(){
 
   Agenda *l = (Agenda *)malloc(sizeof(Agenda));
+  Agenda *head = NULL;
   if(!l){ // verifica se tem memória
     printf("Sem memória disponível!\n");
     exit(1);
@@ -53,7 +51,7 @@ int main(){
           libera(l);
           break;
         case 1:
-          l=insere(l);
+          l=insere(l, &head);
           break;
         case 2:
           l=apaga_contato(l);
@@ -62,7 +60,7 @@ int main(){
           busca(l);
           break;
         case 4:
-          imprime(l);
+          imprime(head);
           break;
         default:
           printf("Digite uma opcao valida (:\n\n");
@@ -98,7 +96,7 @@ Agenda *inicializa(void){
 }
 
 //insere
-Agenda *insere(Agenda *l){
+Agenda *insere(Agenda *l, Agenda **head){
   Agenda *novo = (Agenda*)malloc(sizeof(Agenda));
 
   char nome[101];
@@ -147,19 +145,21 @@ Agenda *insere(Agenda *l){
       for(atual=l;atual!=NULL;atual=atual->prox){
         if(strcmp(novo->nome,nome)<strcmp(atual->nome,nome)&&atual->ant==NULL){
           novo->ant=atual->ant;
+          //atual->prox = novo->prox;
           novo->prox=atual;
           atual->ant=novo;
-          novo->prox=atual;
+          // novo->prox=atual;
         }
         if(strcmp(novo->nome,nome)>strcmp(atual->nome,nome)){
           if(atual->prox==NULL){
             novo->prox=atual->prox;
             novo->ant=atual;
             atual->prox=novo;
+
           //  novo->ant=atual;
           //  novo->prox=NULL;
             printf("%s",novo->ant->ant->nome);
-            printf("%s",novo->ant->nome);
+            printf("%s",novo->ant ->nome);
             printf("%s",novo->nome);
             printf("%s",novo->prox->nome);
             //novo->ant=atual;
@@ -174,6 +174,10 @@ Agenda *insere(Agenda *l){
         }
       }
 
+
+    }
+    if(*head == NULL || novo->ant == NULL){
+      *head = novo;
     }
 
   printf("\n_____Contato adicionado_____\n\n\n");
