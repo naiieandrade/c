@@ -3,20 +3,28 @@
 #include "lib.h"
 
 int menu();
-int * loadFile(void);
-Tree* loadTreeFromFile(Tree *root, int *vetor);
-void balanceTree(Tree *root);
+int * loadFile(int cols, int *vetor);
+Tree* loadTreeFromFile(Tree *root, int *vetor, int cols);
+//void balanceTree(Tree *root);
+Tree * balanceTree(Tree *root, int *vetor, int cols);
 void printinOrder(Tree *root);
 void getHeightPrint(Tree* root);
+FILE *openFile(void);
+int countDataFromFile(void);
 
 int main(){
 
+  int cols = 0;
+  int * vetor;
   Tree * root;
+  Tree * rootB;
   int i;
   root = NULL;
-  int * vetor;
+
+
 
   make_empty(root);
+  make_empty(rootB);
 
   int opt;
   do{
@@ -28,11 +36,14 @@ int main(){
         break;
       case 1:
       //  showTree();
-        vetor = loadFile();
-        root=loadTreeFromFile(root,vetor);
+        cols = countDataFromFile();
+        vetor = calloc(cols,sizeof(int));
+        vetor = loadFile(cols, vetor);
+        root = loadTreeFromFile(root,vetor, cols);
         break;
       case 2:
-        balanceTree(root);
+        //balanceTree(root);
+        rootB = balanceTree(rootB, vetor, cols);
       //  printInOrder();
         break;
       case 3:
@@ -82,15 +93,19 @@ int menu(){
 
 }
 
-int * loadFile(void){
-  char arquivo[]="t1.txt";
-  int valor = 0;
-  int cols=0;
-  char ch;
-  int *vetor;
+//char *choseFile(int opt){
+  // char arquivo[]="t1.txt";
+  //
+  // FILE *file;
+  // return file;
+//}
 
-  FILE *file;
+int countDataFromFile(void){
+  char arquivo[]="t1.txt";
+  FILE* file;
   file = fopen(arquivo, "r");
+  char ch;
+  int cols=0;
 
   if(file==NULL){
     printf("Falha!\n");
@@ -102,7 +117,17 @@ int * loadFile(void){
     }
   }
   cols+=1;
-  vetor = calloc(cols,sizeof(int));
+  return cols;
+}
+
+int * loadFile(int cols, int *vetor){
+  char arquivo[]="t1.txt";
+  int valor = 0;
+  char ch;
+
+  FILE *file;
+  file = fopen(arquivo, "r");
+
   rewind(file);
   if(file==NULL){
     printf("Falha!\n");
@@ -131,13 +156,13 @@ int * loadFile(void){
   // return root;
 }
 
-Tree* loadTreeFromFile(Tree *root, int *vetor){
-  for(int i=0; i<sizeof(vetor);i++){
+Tree* loadTreeFromFile(Tree *root, int *vetor, int cols){
+  for(int i=0; i<cols;i++){
     root=insert(vetor[i],root);
     printf("%d ", vetor[i]);
   }
 
-
+  printf("SIZEOF: %ld\n",sizeof(vetor) );
   printf("\n Show tree: \n\n");
 
 
@@ -147,22 +172,16 @@ Tree* loadTreeFromFile(Tree *root, int *vetor){
 }
 
 
-void balanceTree(Tree *root){
-  char arquivo[]="t1.txt";
-  FILE *file;
-  file = fopen(arquivo, "r");
-  int valor = 0;
+Tree * balanceTree(Tree *rootB, int *vetor, int cols){
 
-  if(file==NULL){
-    printf("Falha!\n");
-  } else {
-    for(int aux=0; aux < 10; aux++){
-      fscanf(file, "%d ", &valor);
-      root = insertBalanced(root, valor);
-    }
+//  int valor = 0;
+
+  for(int aux=0; aux < cols; aux++){
+    rootB = insertBalanced(rootB, vetor[aux]);
   }
 
-  preOrder(root);
+
+/*  preOrder(root);
   printf("\n\n");
   print_ascii_tree(root);
   printf("\n");
@@ -170,7 +189,9 @@ void balanceTree(Tree *root){
   printf("\n\n");
   int h = getHeight(root);
   printf("ALTURA: %d\n",h);
-
+*/
+  print_ascii_tree(rootB);
+  return rootB;
 }
 
 void printinOrder(Tree* root){
