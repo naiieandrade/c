@@ -17,6 +17,10 @@ int menu(){
   printf("2. Mostrar arvore.\n");
   printf("3. Verifica se a árvore é cheia.\n");
   printf("4. Verifica altura da arvore.\n");
+  printf("5. Imprimir arvore em ordem.\n");
+  printf("6. Imprimir arvore em pre ordem.\n");
+  printf("7. Imprimir arvore em pos ordem.\n");
+  printf("8. Mostrar arvore balaceada.\n");
   printf("0. Sair\n");
   printf("\n\nOpção: ");
   scanf("%d", &opt);
@@ -99,6 +103,24 @@ void getHeight(Tree* root){
 }
 
 
+void printInOrder(Tree * root){
+  printf("Impressao da arvore em ordem:\n");
+  inOrder(root);
+  printf("\n\n\n");
+}
+
+void printPreOrder(Tree * root){
+  printf("Impressao da arvore em pre ordem:\n");
+  preOrder(root);
+  printf("\n\n\n");
+}
+
+void printPostOrder(Tree * root){
+  printf("Impressao da arvore em pos ordem:\n");
+  postOrder(root);
+  printf("\n\n\n");
+}
+
 
 int main(){
 
@@ -140,6 +162,18 @@ int main(){
         break;
       case 4:
         getHeight(root);
+        break;
+      case 5:
+        printInOrder(root);
+        break;
+      case 6:
+        printPreOrder(root);
+        break;
+      case 7:
+        printPostOrder(root);
+        break;
+      case 8:
+        
         break;
       default:
         printf("Digite uma opcao valida (: \n\n");
