@@ -15,6 +15,8 @@ int menu(){
   printf("Escolha alguma das opcoes:\n");
   printf("1. Carregar arquivo.\n");
   printf("2. Mostrar arvore.\n");
+  printf("3. Verifica se a árvore é cheia.\n");
+  printf("4. Verifica altura da arvore.\n");
   printf("0. Sair\n");
   printf("\n\nOpção: ");
   scanf("%d", &opt);
@@ -91,6 +93,11 @@ void showTree(Tree * root){
   printf("\n\n");
 }
 
+void getHeight(Tree* root){
+  int h = checkHeight(root);
+  printf("\nAltura da arvore eh: %d\n\n\n",h);
+}
+
 
 
 int main(){
@@ -130,6 +137,9 @@ int main(){
           else
               printf("\n\nArvore não é cheia. :( \n\n");
         };
+        break;
+      case 4:
+        getHeight(root);
         break;
       default:
         printf("Digite uma opcao valida (: \n\n");
