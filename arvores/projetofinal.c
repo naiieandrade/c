@@ -123,6 +123,14 @@ int main(){
       case 2:
         showTree(root);
         break;
+      case 3:
+        {
+          if(isFullTree(root))
+              printf("\n\nArvore é cheia. :) \n\n");
+          else
+              printf("\n\nArvore não é cheia. :( \n\n");
+        };
+        break;
       default:
         printf("Digite uma opcao valida (: \n\n");
     }
