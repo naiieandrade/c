@@ -20,7 +20,7 @@ int menu(){
   printf("5. Imprimir arvore em ordem.\n");
   printf("6. Imprimir arvore em pre ordem.\n");
   printf("7. Imprimir arvore em pos ordem.\n");
-  printf("8. Mostrar arvore balaceada.\n");
+  printf("8. Mostrar arvore balanceada.\n");
   printf("0. Sair\n");
   printf("\n\nOpção: ");
   scanf("%d", &opt);
@@ -121,6 +121,18 @@ void printPostOrder(Tree * root){
   printf("\n\n\n");
 }
 
+void balanceTree(Tree * rootB, int * vetor){
+
+  for(int aux=0; aux<cols; aux++){
+    rootB = insertBalanced(rootB, vetor[aux]);
+  }
+
+  printf("\nArvore balanceada: \n\n");
+  print_ascii_tree(rootB);
+  printf("\n\n\n");
+
+}
+
 
 int main(){
 
@@ -173,7 +185,7 @@ int main(){
         printPostOrder(root);
         break;
       case 8:
-        
+        balanceTree(rootB, vetor);
         break;
       default:
         printf("Digite uma opcao valida (: \n\n");
