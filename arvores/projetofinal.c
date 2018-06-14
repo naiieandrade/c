@@ -13,7 +13,8 @@ int menu(){
   printf("'        bem vindo            '\n");
   printf("'-----------------------------'\n");
   printf("Escolha alguma das opcoes:\n");
-  printf("1. Mostrar arvore\n");
+  printf("1. Carregar arquivo.\n");
+  printf("2. Mostrar arvore.\n");
   printf("0. Sair\n");
   printf("\n\nOpção: ");
   scanf("%d", &opt);
@@ -25,7 +26,7 @@ char *choseFile(){
   int opt;
   char * arquivo;
   arquivo = malloc(sizeof(char)*8);
-    printf("Escolha um arquivo válido: \n");
+    printf("Escolha um arquivo válido [1-6]: \n");
     scanf("%d",&opt);
 
     switch (opt) {
@@ -57,11 +58,39 @@ int * loadFile(char *arquivo, int *vetor){
     }
   }
 
+  printf("Os valores do arquivo sao: \n");
   for(int i=0;i<cols;i++)
     printf("%d ",vetor[i]);
 
+  printf("\n\n");
   return vetor;
 }
+
+Tree* loadTreeFromFile(Tree *root, char *arquivo){
+
+  FILE *file;
+  file = fopen(arquivo, "r");
+  rewind(file);
+  int *valor;
+  if(file==NULL){
+    printf("Falha!\n");
+  } else {
+    for(int aux=0; aux < cols; aux++){
+      fscanf(file, "%d%*c", &valor[aux]);
+      root = insert(valor[aux], root);
+    }
+  }
+  printf("O arquivo selecionado eh: %s \n\n", arquivo);
+  return root;
+}
+
+void showTree(Tree * root){
+
+  printf("Mostrar arvore:\n");
+  print_ascii_tree(root);
+  printf("\n\n");
+}
+
 
 
 int main(){
@@ -71,8 +100,11 @@ int main(){
   Tree * rootB;
   char *arquivo;
 
-//  make_empty(root);
-//  make_empty(rootB);
+  root = NULL;
+  rootB = NULL;
+
+  make_empty(root);
+  make_empty(rootB);
 
   int opt;
   do{
@@ -83,11 +115,13 @@ int main(){
         printf("Libera\n");
         break;
       case 1:
-      //  showTree();
         arquivo = choseFile();
         vetor = calloc(cols,sizeof(int));
         vetor = loadFile(arquivo, vetor);
-      //  root = loadTreeFromFile(root,arquivo);
+        root = loadTreeFromFile(root,arquivo);
+        break;
+      case 2:
+        showTree(root);
         break;
       default:
         printf("Digite uma opcao valida (: \n\n");
