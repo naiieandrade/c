@@ -11,6 +11,8 @@ struct lista{
 };
 typedef struct lista Lista;
 
+Lista *head;
+
 
 int menu(){
   int opt;
@@ -33,6 +35,15 @@ int menu(){
   scanf("%d", &opt);
 
   return opt;
+}
+
+void libera(Lista *l){
+  Lista *p=l;
+  while (p!=NULL) {
+    Lista *t = p->prox; /*guarda referencia para o proximo elemento */
+    free(p); //libera a memória apontada por p
+    p=t; //faz p apontar para o proximo
+  }
 }
 
 char *choseFile(){
@@ -68,27 +79,113 @@ char *choseFile(){
   return arquivo;
 }
 
+Lista *insereInicio(Lista *l, int i, Lista **head)
+{
+  Lista *novo = (Lista*)malloc(sizeof(Lista));
+  novo->valor = i;
+  novo->prox = l;
+  if(*head == NULL){
+    *head = novo;
+  }
+  return novo;
+}
 
-int * loadFile(char *arquivo, int *vetor){
+Lista *insereFim(Lista *l, int i){
+  Lista *novo = (Lista *)malloc(sizeof(Lista));
+  novo->valor=i;
+  novo->prox=NULL;
 
-  int valor = 0;
+  if(l==NULL){
+    l=novo;
+  } else {
+    Lista *aux = l;
+    while(aux->prox != NULL){
+      aux=aux->prox;
+    }
+    aux->prox=novo;
+  }
+}
+
+Lista *retira (Lista *l, int v)//, Lista **head)
+{
+  Lista *ant = NULL; /* ponteiro para elemento anterior */
+  Lista *p = l; /* ponteiro para percorrer a lista */
+
+  //procura elemento na lista, guardando anterior
+  while(p!=NULL && p->valor!=v){
+    ant = p;
+    p = p->prox;
+  }
+  //Verifica se achou o elemento
+  if(p==NULL){
+    return l;
+  }
+  // Retira elemento
+  if(ant==NULL){
+    /* retira do início */
+    l = p->prox;
+  } else {
+    /* retira do meio*/
+    ant->prox = p->prox;
+  }
+  free(p);
+  return l;
+
+}
+
+
+void imprime(Lista *l)
+{
+  Lista *p;
+  for(p=l;p!=NULL;p=p->prox){
+    printf("%d ",p->valor);
+  }
+}
+
+// Cria lista vazia
+Lista *inicializa(void)
+{
+  return NULL;
+}
+
+Lista * loadFile(char *arquivo, Tree **rootB, Lista **head){
+
+  //int valor = 0;
   char ch;
+  int valor[10];
+  Lista *vetor=NULL;
+  libera(vetor);
+  *rootB = NULL;
+  make_empty(*rootB);
+  vetor = inicializa();
 
   FILE *file;
   file = fopen(arquivo, "r");
-
   rewind(file);
+
   if(file==NULL){
     printf("Falha!\n");
   } else {
     for(int aux=0; aux < cols; aux++){
-      fscanf(file, "%d%*c", &vetor[aux]);
+      fscanf(file, "%d%*c", &valor[aux]);
+      //printf("valor: %d ",valor );
+    //  vetor = insereFim(vetor, valor[aux]);
     }
   }
+  rewind(file);
+//  fclose(file);
 
   printf("Os valores do arquivo sao: \n");
-  for(int i=0;i<cols;i++)
-    printf("%d ",vetor[i]);
+  for(int i=cols-1;i>=0; --i)
+    vetor = insereInicio(vetor, valor[i], &(*head));
+    //printf("%d ", valor[i]);
+  imprime(vetor);
+
+  Lista * p;
+  //for(int aux=0; aux<cols; aux++){
+  for(p=vetor; p!=NULL; p=p->prox){
+    *rootB = insertBalanced(*rootB, p->valor);
+  }
 
   printf("\n\n");
 
@@ -99,17 +196,22 @@ int * loadFile(char *arquivo, int *vetor){
 Tree* loadTreeFromFile(Tree *root, char *arquivo){
 
   root = make_empty(root);
-
+  //printf("TESTE2\n");
   FILE *file;
   file = fopen(arquivo, "r");
+  //printf("TESTE1\n");
   rewind(file);
-  int *valor;
+  //printf("TESTE1\n");
+  int valor[10];
   if(file==NULL){
     printf("Falha!\n");
   } else {
     for(int aux=0; aux < cols; aux++){
+    //  printf("TESTE4444\n");
       fscanf(file, "%d%*c", &valor[aux]);
+    //  printf("%d ",valor[aux] );
       root = insert(valor[aux], root);
+    //  printf("TESTE1\n");
     }
   }
 
@@ -151,32 +253,42 @@ void printPostOrder(Tree * root){
   printf("\n\n\n");
 }
 
-void balanceTree(Tree * rootB, int * vetor){
+void balanceTree(Tree **rootB){
 
-  for(int aux=0; aux<cols; aux++){
-    rootB = insertBalanced(rootB, vetor[aux]);
-  }
+  // Lista * p;
+  // //for(int aux=0; aux<cols; aux++){
+  // for(p=vetor; p!=NULL; p=p->prox){
+  //   rootB = insertBalanced(rootB, p->valor);
+  // }
 
   printf("\nArvore balanceada: \n\n");
-  print_ascii_tree(rootB);
+  print_ascii_tree(*rootB);
   printf("\n\n\n");
   //return rootB;
 
 }
 
-Tree* removeValue(Tree * root, Tree **rootB){
+Tree* removeValue(Tree * root, Tree **rootB, Lista *vetor){
   int valor = 0;
+  Lista * p;
+  printf("votr prox: %d\n", vetor->valor);
   printf("Digite o valor que deseja remover?\n");
   scanf("%d",&valor);
   if(busca(root, valor)==0){
     printf("Arvore não possui esse valor.\n");
   } else {
     root = delete(valor, root);
+    vetor = retira(vetor, valor);
+    //for(int aux=0; aux<cols; aux++){
+    *rootB = delete(valor, *rootB);
+    for(p=vetor; p!=NULL; p=p->prox){
+      *rootB = insertBalanced(*rootB, p->valor);
+    }
     printf("\n\nRemovido com sucesso");
   }
   printf("\n\n\n");
 
-  *rootB = delete(valor, *rootB);
+  //*rootB = delete(valor, *rootB);
   return root;
 
 }
@@ -184,10 +296,11 @@ Tree* removeValue(Tree * root, Tree **rootB){
 
 int main(){
 
-  int * vetor;
+  Lista *vetor;
   Tree * root;
   Tree * rootB;
   char *arquivo;
+  Lista *head = NULL;
 
   root = NULL;
   rootB = NULL;
@@ -205,8 +318,9 @@ int main(){
         break;
       case 1:
         arquivo = choseFile();
-        vetor = calloc(cols,sizeof(int));
-        vetor = loadFile(arquivo, vetor);
+        //vetor = calloc(cols,sizeof(int));
+      //  vetor = inicializa();
+        vetor = loadFile(arquivo, &rootB, &head);
         root = loadTreeFromFile(root,arquivo);
         break;
       case 2:
@@ -233,10 +347,10 @@ int main(){
         printPostOrder(root);
         break;
       case 8:
-        balanceTree(rootB, vetor);
+        root = removeValue(root, &rootB, vetor);
         break;
       case 9:
-        root = removeValue(root, &rootB);
+        balanceTree(&rootB);
         break;
       default:
         printf("Digite uma opcao valida (: \n\n");
